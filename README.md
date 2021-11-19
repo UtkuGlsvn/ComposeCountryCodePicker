@@ -5,9 +5,9 @@ How to add in your project
 -------------------------------------------------------------------------------
 In the build.gradle add maven central repository
 
-repositories {
+    repositories {
     maven { url 'https://jitpack.io' }
-}
+    }
 Then, add library at app/build.gradle with following code
 
     implementation 'com.github.UtkuGlsvn:ComposeCountryCodePicker:1.0.4'
