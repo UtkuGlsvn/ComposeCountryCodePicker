@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,12 +40,24 @@ class CountryCodePicker {
             defaultSelectedCountry = getLibCountries().single { it.countryCode == "us" },
         )
     }
-
+    @Preview
+    @Composable
+    private fun PreviewCountryCodeDialogNoIconReducedPadding() {
+        CountryCodeDialog(
+            pickedCountry = {},
+            defaultSelectedCountry = getLibCountries().single { it.countryCode == "us" },
+            isOnlyFlagShow = true,
+            isShowIcon = false,
+            padding = 2.dp
+        )
+    }
 
     @Composable
     fun CountryCodeDialog(
         modifier: Modifier = Modifier,
+        padding: Dp = 15.dp,
         isOnlyFlagShow: Boolean = false,
+        isShowIcon: Boolean = true,
         defaultSelectedCountry: CountryCode = getLibCountries().first(),
         pickedCountry: (CountryCode) -> Unit,
         dialogSearch: Boolean = true,
@@ -60,7 +73,7 @@ class CountryCodePicker {
                 .padding(3.dp)
                 .clickable { isOpenDialog = true }
         ) {
-            Column(modifier = Modifier.padding(15.dp)) {
+            Column(modifier = Modifier.padding(padding)) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -78,7 +91,9 @@ class CountryCodePicker {
                             Modifier.padding(horizontal = 18.dp)
                         )
                     }
-                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
+                    if (isShowIcon) {
+                        Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
+                    }
                 }
             }
 
