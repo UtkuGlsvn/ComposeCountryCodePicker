@@ -9,5 +9,5 @@ data class CountryCode(
     val flagResID: Int = 0
 ) {
     val countryCode = cCode.lowercase(Locale.getDefault())
-    val countryName = cName.lowercase(Locale.getDefault())
+    val countryName = cName
 }
