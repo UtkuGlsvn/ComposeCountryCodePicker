@@ -69,7 +69,7 @@ class CountryCodePicker {
         dialogRounded: Int = 12,
         dialogTextColor: Color = Color.Black,
         dialogSearchHintColor: Color = Color.Gray,
-        dialogTextSelectColor: Color = Color.Unspecified,
+        dialogTextSelectColor: Color = Color(0xff3898f0),
         dialogBackgroundColor: Color = Color.White,
     ) {
         val countryList: List<CountryCode> = getLibCountries()
