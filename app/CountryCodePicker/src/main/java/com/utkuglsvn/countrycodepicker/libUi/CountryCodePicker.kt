@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -25,6 +27,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.runtime.CompositionLocalProvider
 import com.utkuglsvn.countrycodepicker.libData.CountryCode
 import com.utkuglsvn.countrycodepicker.libData.utils.getFlagMasterResID
 import com.utkuglsvn.countrycodepicker.libData.utils.getLibCountries
@@ -56,12 +59,18 @@ class CountryCodePicker {
     fun CountryCodeDialog(
         modifier: Modifier = Modifier,
         padding: Dp = 15.dp,
+        textColor: Color = Color.Black,
+        backgroundColor: Color = Color.White,
         isOnlyFlagShow: Boolean = false,
         isShowIcon: Boolean = true,
         defaultSelectedCountry: CountryCode = getLibCountries().first(),
         pickedCountry: (CountryCode) -> Unit,
         dialogSearch: Boolean = true,
-        dialogRounded: Int = 12
+        dialogRounded: Int = 12,
+        dialogTextColor: Color = Color.Black,
+        dialogSearchHintColor: Color = Color.Gray,
+        dialogTextSelectColor: Color = Color(0xff3898f0),
+        dialogBackgroundColor: Color = Color.White,
     ) {
         val countryList: List<CountryCode> = getLibCountries()
         var isPickCountry by remember { mutableStateOf(defaultSelectedCountry) }
@@ -71,7 +80,8 @@ class CountryCodePicker {
         Card(
             modifier = modifier
                 .padding(3.dp)
-                .clickable { isOpenDialog = true }
+                .clickable { isOpenDialog = true },
+            backgroundColor = backgroundColor,
         ) {
             Column(modifier = Modifier.padding(padding)) {
                 Row(
@@ -88,7 +98,8 @@ class CountryCodePicker {
                     if (!isOnlyFlagShow) {
                         Text(
                             "${isPickCountry.countryPhoneCode} ${isPickCountry.countryCode}",
-                            Modifier.padding(horizontal = 18.dp)
+                            Modifier.padding(horizontal = 18.dp),
+                            color = textColor,
                         )
                     }
                     if (isShowIcon) {
@@ -107,11 +118,16 @@ class CountryCodePicker {
                             .fillMaxWidth()
                             .fillMaxHeight(0.85f),
                         elevation = 4.dp,
+                        backgroundColor = dialogBackgroundColor,
                         shape = RoundedCornerShape(dialogRounded.dp)
                     ) {
                         Column {
                             if (dialogSearch) {
-                                searchValue = DialogSearchView()
+                                searchValue = DialogSearchView(
+                                    textColor = dialogTextColor,
+                                    hintColor = dialogSearchHintColor,
+                                    textSelectColor = dialogTextSelectColor,
+                                )
                             }
                             LazyColumn {
                                 items(
@@ -141,7 +157,8 @@ class CountryCodePicker {
                                         )
                                         Text(
                                             countryItem.countryName,
-                                            Modifier.padding(horizontal = 18.dp)
+                                            Modifier.padding(horizontal = 18.dp),
+                                            color = dialogTextColor,
                                         )
                                     }
                                 }
@@ -154,7 +171,11 @@ class CountryCodePicker {
     }
 
     @Composable
-    private fun DialogSearchView(): String {
+    private fun DialogSearchView(
+        textColor: Color,
+        hintColor: Color,
+        textSelectColor: Color,
+    ): String {
         var searchValue by remember { mutableStateOf("") }
         Row {
             CustomTextField(
@@ -167,6 +188,9 @@ class CountryCodePicker {
                 },
                 fontSize = 14.sp,
                 hint = "Search ...",
+                textColor = textColor,
+                hintColor = hintColor,
+                textSelectColor = textSelectColor,
                 textAlign = TextAlign.Start,
             )
         }
@@ -180,49 +204,56 @@ class CountryCodePicker {
         onValueChange: (String) -> Unit,
         hint: String = "",
         fontSize: TextUnit = 16.sp,
+        textColor: Color,
+        hintColor: Color,
+        textSelectColor: Color,
         textAlign: TextAlign = TextAlign.Center
     ) {
-        Box(
-            modifier = modifier
-                .background(
-                    color = Color.White.copy(alpha = 0.1f)
+        Box(modifier) {
+            CompositionLocalProvider(
+                LocalTextSelectionColors provides TextSelectionColors(
+                    handleColor = textSelectColor,
+                    backgroundColor = textSelectColor.copy(0.2f),
                 )
-        ) {
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                value = value,
-                onValueChange = onValueChange,
-                textStyle = LocalTextStyle.current.copy(
-                    textAlign = textAlign,
-                    fontSize = fontSize
-                ),
-                singleLine = true,
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = null,
-                        tint = Color.Black.copy(0.2f)
-                    )
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                )
-            )
-            if (value.isEmpty()) {
-                Text(
-                    text = hint,
-                    style = MaterialTheme.typography.body1,
-                    color = Color.Gray,
-                    modifier = Modifier.then(
-                        Modifier
-                            .align(Alignment.CenterStart)
-                            .padding(start = 52.dp)
+            ) {
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    value = value,
+                    onValueChange = onValueChange,
+                    textStyle = LocalTextStyle.current.copy(
+                        textAlign = textAlign,
+                        fontSize = fontSize,
+                    ),
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = null,
+                            tint = textColor.copy(0.2f)
+                        )
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = textColor,
+                        backgroundColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = textSelectColor,
                     )
                 )
+                if (value.isEmpty()) {
+                    Text(
+                        text = hint,
+                        style = MaterialTheme.typography.body1,
+                        color = hintColor,
+                        modifier = Modifier.then(
+                            Modifier
+                                .align(Alignment.CenterStart)
+                                .padding(start = 52.dp)
+                        )
+                    )
+                }
             }
         }
     }
