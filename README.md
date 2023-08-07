@@ -10,7 +10,9 @@ In the build.gradle add maven central repository
     }
 Then, add library at app/build.gradle with following code
 
-    implementation 'com.github.UtkuGlsvn:ComposeCountryCodePicker:1.0.4'
+    implementation 'com.github.UtkuGlsvn:ComposeCountryCodePicker:1.0.5'
+
+    implementation 'com.github.UtkuGlsvn:ComposeCountryCodePicker:1.0.4' -> old version
     
     
 How to use project
