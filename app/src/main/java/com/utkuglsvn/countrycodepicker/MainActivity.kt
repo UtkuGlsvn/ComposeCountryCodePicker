@@ -31,8 +31,9 @@ class MainActivity : ComponentActivity() {
                             ).show()
                         },
                         defaultSelectedCountry = getLibCountries().single { it.countryCode == "us" },
-                        dialogSearch = false,
-                        dialogRounded = 22
+                        dialogSearch = true ,
+                        dialogRounded = 22,
+                        isCountryIconRounded = true
                     )
                 }
             }

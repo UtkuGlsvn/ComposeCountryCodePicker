@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import com.utkuglsvn.countrycodepicker.libData.CountryCode
 import com.utkuglsvn.countrycodepicker.libData.utils.getFlagMasterResID
 import com.utkuglsvn.countrycodepicker.libData.utils.getLibCountries
@@ -43,6 +45,7 @@ class CountryCodePicker {
             defaultSelectedCountry = getLibCountries().single { it.countryCode == "us" },
         )
     }
+
     @Preview
     @Composable
     private fun PreviewCountryCodeDialogNoIconReducedPadding() {
@@ -71,6 +74,7 @@ class CountryCodePicker {
         dialogSearchHintColor: Color = Color.Gray,
         dialogTextSelectColor: Color = Color(0xff3898f0),
         dialogBackgroundColor: Color = Color.White,
+        isCountryIconRounded: Boolean = false
     ) {
         val countryList: List<CountryCode> = getLibCountries()
         var isPickCountry by remember { mutableStateOf(defaultSelectedCountry) }
@@ -93,13 +97,22 @@ class CountryCodePicker {
                             id = getFlagMasterResID(
                                 isPickCountry.countryCode
                             )
-                        ), contentDescription = null
+                        ), contentDescription = null,
+                        modifier =
+                        if (isCountryIconRounded) {
+                            Modifier
+                                .size(28.dp)
+                                .clip(shape = RoundedCornerShape(100.dp))
+                        } else {
+                            Modifier.size(width = 36.dp, height = 22.dp)
+                        },
+                        contentScale = ContentScale.Crop
                     )
                     if (!isOnlyFlagShow) {
                         Text(
                             "${isPickCountry.countryPhoneCode} ${isPickCountry.countryCode}",
                             Modifier.padding(horizontal = 18.dp),
-                            color = textColor,
+                            color = textColor
                         )
                     }
                     if (isShowIcon) {
@@ -153,7 +166,15 @@ class CountryCodePicker {
                                                 id = getFlagMasterResID(
                                                     countryItem.countryCode
                                                 )
-                                            ), contentDescription = null
+                                            ), contentDescription = null,
+                                            if (isCountryIconRounded) {
+                                                Modifier
+                                                    .size(28.dp)
+                                                    .clip(shape = RoundedCornerShape(100.dp))
+                                            } else {
+                                                Modifier.size(width = 36.dp, height = 22.dp)
+                                            },
+                                            contentScale = ContentScale.Crop
                                         )
                                         Text(
                                             countryItem.countryName,
